@@ -6,22 +6,23 @@
 [![license](https://img.shields.io/npm/l/@zarr20/rakit-routes.svg)](./LICENSE)
 [![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
-A lightweight, efficient file-based routing generator that automatically maps your `pages` directory into ready-to-use React Router configuration.
+`@zarr20/rakit-routes` is a lightweight, zero-overhead file-based routing generator. It scans your React pages folder and automatically generates clean, type-safe route configurations with built-in code splitting via `React.lazy`.
 
 ---
 
 ## 🚀 Key Features
 
-- ⚡ **File-System Based Routing**: Automatically maps directory structure to route paths (supports dynamic parameters like `[id]` → `:id`).
-- ⚛️ **React Router Code Generation**: Generates clean route definitions with `React.lazy` for built-in code splitting.
-- 🛠️ **CLI Ready**: Quick one-command execution via `npx @zarr20/rakit-routes` or `npx rakit-routes`.
-- 🔌 **Extensible Writers**: Modular architecture allowing custom route writers for different router libraries or frameworks.
+- ⚡ **File-System Based Routing**: Automatically maps directory hierarchies into route paths (supports dynamic parameters like `[id]` → `:id`).
+- ⚛️ **React Router Code Generation**: Generates clean route definitions with `React.lazy` for optimized code splitting.
+- 🛠️ **CLI Ready**: Execute instantly via `npx @zarr20/rakit-routes` or `npx rakit-routes`.
+- 🔌 **Extensible Writers**: Modular architecture allowing custom route writers for different router libraries or custom frameworks.
 - 📦 **TypeScript First**: Full TypeScript support with comprehensive type definitions included out of the box.
 
 ---
 
 ## 📦 Installation
 
+### From NPM Registry:
 ```bash
 npm install @zarr20/rakit-routes
 # or
@@ -30,13 +31,18 @@ pnpm add @zarr20/rakit-routes
 yarn add @zarr20/rakit-routes
 ```
 
+### Or Directly from Git Repository:
+```bash
+npm install git+https://github.com/zarr20/rakit-routes.git
+```
+
 ---
 
 ## 💡 Usage
 
 ### 1. Using Node / TypeScript Script
 
-Create a script file, for example `scripts/generate-routes.ts`:
+Create a build or generator script (e.g., `scripts/generate-routes.ts`):
 
 ```typescript
 import { routerMapper, reactRouterWriter } from '@zarr20/rakit-routes';
@@ -57,7 +63,7 @@ routerMapper({
 console.log('✅ Routes generated successfully');
 ```
 
-Add the script to your `package.json`:
+Add the script to your application's `package.json`:
 
 ```json
 {
@@ -71,17 +77,19 @@ Add the script to your `package.json`:
 
 ### 2. Using the CLI
 
+Run directly without creating a script file:
+
 ```bash
 npx @zarr20/rakit-routes
 # or
 npx rakit-routes
 ```
 
-By default, the CLI scans `src/pages` and outputs route configuration to `src/shared/router/router.tsx`.
+By default, the CLI scans `src/pages` and outputs route definitions to `src/shared/router/router.tsx`.
 
 ---
 
-## 🗂️ Path & Route Conversion
+## 🗂️ Path & Route Conversion Rules
 
 | File in `pages/` | Generated Route URL |
 |---|---|
@@ -93,9 +101,40 @@ By default, the CLI scans `src/pages` and outputs route configuration to `src/sh
 
 ---
 
-## 📚 Documentation
+## ⚛️ React Router Integration Example
 
-For detailed usage, configuration options, and full React integration examples, visit the [Documentation Portal](./docs/).
+```typescript
+// App.tsx
+import { Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import router from './shared/router/routes';
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          {router.map(({ path, component: Component }) => (
+            <Route
+              key={path}
+              path={path}
+              element={<Component />}
+            />
+          ))}
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
+```
+
+---
+
+## 🔗 Links
+
+- **Repository**: [https://github.com/zarr20/rakit-routes](https://github.com/zarr20/rakit-routes)
+- **Development & Source Code**: [https://github.com/zarr20/rakit-routes-dev](https://github.com/zarr20/rakit-routes-dev)
+- **Issues & Feedback**: [https://github.com/zarr20/rakit-routes-dev/issues](https://github.com/zarr20/rakit-routes-dev/issues)
 
 ---
 
