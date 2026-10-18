@@ -11,9 +11,9 @@
 ---
 
 <!-- LATEST_RELEASE_START -->
-## 🆕 What's New in v1.1.4
+## 🆕 What's New in v1.1.5
 
-- ♻️ **writer**: add inlined group guards for config middleware, semantic PascalCase naming, and remove @vite-ignore
+- ♻️ update React router integration to use generatedRoutes function and conditional Outlet imports
 <!-- LATEST_RELEASE_END -->
 
 ## 🚀 Key Features
@@ -142,16 +142,52 @@ Whenever you create, rename, or delete a page in `src/pages/`, routes regenerate
 
 ## ⚛️ React Router Integration
 
-### Approach 1: Zero-Boilerplate `<GeneratedRoutes />` (Recommended)
+### Approach 1: Modern Data Router (`createBrowserRouter`) (Recommended)
 
-The generated `router.tsx` automatically exports a ready-to-use `<GeneratedRoutes />` component:
+The generated `router.tsx` exports `generatedRoutes()` which returns a `<React.Fragment>` containing all generated `<Route>` elements:
 
 ```tsx
 // App.tsx
-import { Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { GeneratedRoutes } from './shared/router/router';
-import AppLayout from './layouts/AppLayout';
+import { Suspense, useMemo } from "react";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
+import { generatedRoutes } from "./shared/router/router";
+import AppLayout from "./layouts/AppLayout";
+
+export default function App() {
+  const router = useMemo(() => {
+    return createBrowserRouter(
+      createRoutesFromElements(
+        <Route element={<AppLayout />}>
+          {generatedRoutes()}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>,
+      ),
+    );
+  }, []);
+
+  return (
+    <Suspense fallback={<div>Loading page...</div>}>
+      <RouterProvider router={router} />
+    </Suspense>
+  );
+}
+```
+
+> 💡 **React Router Tip:** In React Router v6 & v7, `createRoutesFromElements()` and `<Routes>` require direct children to be `<Route>` or `<React.Fragment>`. Executing `{generatedRoutes()}` directly supplies a valid Fragment containing all nested and grouped route elements.
+
+### Approach 2: Traditional JSX Router (`<BrowserRouter><Routes>`)
+
+```tsx
+import { Suspense } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { generatedRoutes } from "./shared/router/router";
+import AppLayout from "./layouts/AppLayout";
 
 export default function App() {
   return (
@@ -159,7 +195,7 @@ export default function App() {
       <Suspense fallback={<div>Loading page...</div>}>
         <Routes>
           <Route element={<AppLayout />}>
-            <GeneratedRoutes />
+            {generatedRoutes()}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
@@ -169,19 +205,20 @@ export default function App() {
 }
 ```
 
-### Approach 2: With Auth or Custom Route Wrapper
+### Approach 3: Global Auth or Custom Route Wrapper
+If using config-only middleware with centralized auth:
 ```tsx
-<GeneratedRoutes
-  auth={currentAuth}
-  wrapper={({ component: Component, meta, path }) => (
-    <MyCustomMiddleware component={Component} meta={meta} path={path} />
-  )}
-/>
+{generatedRoutes({
+  auth: currentAuth,
+  wrapper: ({ component: Component, meta, path }) => (
+    <CustomWrapper component={Component} meta={meta} path={path} />
+  )
+})}
 ```
 
-### Approach 3: Manual Mapping via `routerConfig`
+### Approach 4: Manual Mapping via `routerConfig`
 ```tsx
-import { routerConfig } from './shared/router/router';
+import { routerConfig } from "./shared/router/router";
 
 {routerConfig.map(({ path, component: Component }) => (
   <Route key={path} path={path} element={<Component />} />
@@ -204,23 +241,78 @@ src/pages/
 │   ├── login.tsx           # Resolves to URL: /login
 │   └── register.tsx        # Resolves to URL: /register
 └── (dashboard)/
-    ├── _middleware.ts      # protected: true, roles: ['admin'] (applies to /analytics, /users/:id)
+    ├── _middleware.tsx     # Component Middleware (useAuth + RouteGuard)
     ├── analytics.tsx       # Resolves to URL: /analytics
     └── users/[id].tsx      # Resolves to URL: /users/:id
 ```
 
-### 2. Directory-level Middleware (`_middleware.ts`)
-Create a `_middleware.ts` (or `middleware.ts`) in any directory to enforce rules across all routes in that folder:
+### 2. Middleware Patterns
+
+`@zarr20/rakit-routes` supports two flexible middleware patterns:
+
+#### 🌟 Pattern A: Component Middleware (`_middleware.tsx`) — Recommended for Hooks & Context
+When your authentication logic depends on React Context or hooks (e.g. `useAuth()`), handle the gatekeeping **inside `_middleware.tsx`**. This keeps your root router completely clean and prevents router re-creation on auth state changes:
+
+```tsx
+// src/pages/(dashboard)/_middleware.tsx
+import { useMemo } from "react";
+import { Outlet } from "react-router-dom";
+import { RouteGuard } from "@zarr20/rakit-routes/client";
+import { useAuth } from "@/context/AuthContext";
+
+export const meta = {
+  protected: true,
+  roles: ["admin", "manager"],
+};
+
+export default function DashboardMiddleware() {
+  const auth = useAuth();
+
+  const authState = useMemo(
+    () => ({
+      isLogin: auth.isAuthenticated,
+      roles: auth.user?.role ? [auth.user.role] : [],
+    }),
+    [auth.isAuthenticated, auth.user?.role],
+  );
+
+  return (
+    <RouteGuard meta={meta} auth={authState}>
+      <Outlet />
+    </RouteGuard>
+  );
+}
+```
+
+`@zarr20/rakit-routes` automatically detects the default exported React component and wraps the group routes:
+```tsx
+<Route element={<DashboardMiddleware />}>
+  <Route path="/analytics" ... />
+  <Route path="/users/:id" ... />
+</Route>
+```
+
+#### ⚡ Pattern B: Config-Only Middleware (`_middleware.ts`) — Inlined Zero-Waterfall Guard
+If you prefer pure metadata without a custom React component, export a configuration object:
 
 ```typescript
 // src/pages/(dashboard)/_middleware.ts
 export default {
   protected: true,
-  roles: ['admin', 'manager'],
-  redirect: '/login'
+  roles: ["admin", "manager"],
+  redirect: "/login"
 };
 ```
-Every route in `src/pages/(dashboard)/*` automatically inherits `protected: true` and `roles: ['admin', 'manager']`.
+
+`@zarr20/rakit-routes` inlines a lightweight `DashboardGroupGuard` directly in `router.tsx` wrapping the group:
+```tsx
+const DashboardGroupGuard = ({ auth }: { auth?: AuthState }) => (
+  <RouteGuard meta={{ protected: true, roles: ["admin", "manager"] }} auth={auth}>
+    <Outlet />
+  </RouteGuard>
+);
+```
+Supply auth via `{generatedRoutes({ auth: authState })}`.
 
 ### 3. In-Page Specific Overrides (`export const meta`)
 Individual pages can override or extend group rules:
@@ -228,8 +320,8 @@ Individual pages can override or extend group rules:
 ```typescript
 // src/pages/(dashboard)/billing.tsx
 export const meta = {
-  roles: ['superadmin'], // Overrides parent group to superadmin only
-  title: 'Billing & Finance'
+  roles: ["superadmin"], // Overrides parent group to superadmin only
+  title: "Billing & Finance"
 };
 
 export default function BillingPage() {
@@ -239,7 +331,7 @@ export default function BillingPage() {
 
 ### 4. Built-in Runtime Helpers & `<RouteGuard />`
 ```typescript
-import { RouteGuard, hasRole, hasPermission, evaluateGuard, canAccess } from '@zarr20/rakit-routes';
+import { RouteGuard, hasRole, hasPermission, evaluateGuard, canAccess } from "@zarr20/rakit-routes/client";
 
 // Quick boolean access check:
 const isAllowed = canAccess(auth, route.meta);
