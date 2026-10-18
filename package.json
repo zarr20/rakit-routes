@@ -1,6 +1,6 @@
 {
   "name": "@zarr20/rakit-routes",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Automatic file-system based routing generator for React applications.",
   "type": "module",
   "main": "./dist/index.js",
