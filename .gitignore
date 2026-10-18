@@ -1,0 +1,4 @@
+# Ignore tarball packages and node_modules
+node_modules/
+*.tgz
+.DS_Store

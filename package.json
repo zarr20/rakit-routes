@@ -1,0 +1,45 @@
+{
+  "name": "rakit-routes",
+  "version": "1.0.0",
+  "description": "Automatic file-system based routing generator for React applications.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "rakit-routes": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "react",
+    "router",
+    "routing",
+    "file-system-routing",
+    "rakit",
+    "rakit-routes"
+  ],
+  "author": "Rakit (Dzarr Al Ghifari)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zarr20/rakit-routes.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "pack": "npm pack",
+    "publish:dry": "npm publish --dry-run",
+    "publish:public": "npm publish --access public"
+  }
+}
