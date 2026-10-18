@@ -16,6 +16,8 @@ export declare function findCascadingLayouts(file: string, baseDir: string): str
  */
 export declare function resolveCombinedMeta(file: string, baseDir: string): {
     meta?: RouteMeta;
+    groupMeta?: RouteMeta;
+    groupName?: string;
     middlewareFile?: string;
     middlewareComponent?: string;
     layoutFiles?: string[];

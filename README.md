@@ -11,9 +11,9 @@
 ---
 
 <!-- LATEST_RELEASE_START -->
-## 🆕 What's New in v1.1.3
+## 🆕 What's New in v1.1.4
 
-- ✨ add GeneratedRoutes component, nested middleware routes, ./client subpath export, and fix writer syntax
+- ♻️ **writer**: add inlined group guards for config middleware, semantic PascalCase naming, and remove @vite-ignore
 <!-- LATEST_RELEASE_END -->
 
 ## 🚀 Key Features

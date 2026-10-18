@@ -3,6 +3,8 @@ export interface RouteItem {
     path: string;
     file: string;
     meta?: RouteMeta;
+    groupMeta?: RouteMeta;
+    groupName?: string;
     middlewareFile?: string;
     middlewareComponent?: string;
     layoutFiles?: string[];
