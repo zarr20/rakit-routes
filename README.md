@@ -11,12 +11,9 @@
 ---
 
 <!-- LATEST_RELEASE_START -->
-## 🆕 What's New in v1.1.1
+## 🆕 What's New in v1.1.2
 
-- ✨ **deploy**: automate release note extraction directly from git commits
-- ✨ **deploy**: auto-detect updates and reset README with latest release highlights
-- ✨ add route middleware, role handling, cascading guards, and build-time metadata extraction
-- 🐛 **release**: standardize git tag convention to X.Y.Z without v prefix
+- ✨ **routes**: add route grouping support (auth), (dashboard) with group-level middleware
 <!-- LATEST_RELEASE_END -->
 
 ## 🚀 Key Features
@@ -133,6 +130,9 @@ Whenever you create, rename, or delete a page in `src/pages/`, routes regenerate
 | `products/new.tsx` | `/products/new` | High (Static before dynamic) |
 | `products/[id].tsx` | `/products/:id` | Medium (Dynamic parameter) |
 | `users/[userId]/posts/[postId].tsx` | `/users/:userId/posts/:postId` | Medium (Dynamic parameters) |
+| `(auth)/login.tsx` | `/login` | High (Route Group: parentheses stripped) |
+| `(dashboard)/analytics.tsx` | `/analytics` | High (Route Group) |
+| `(dashboard)/index.tsx` | `/` | Top (Route Group index) |
 | `[...slug].tsx` | `/*` | Low (Catch-all wildcard) |
 | `404.tsx` or `_404.tsx` | `*` | Lowest (Fallback) |
 
@@ -165,6 +165,69 @@ export default function App() {
     </BrowserRouter>
   );
 }
+```
+
+---
+
+## 🛡️ Route Groups, Middleware & Access Control
+
+`@zarr20/rakit-routes` provides first-class support for **Route Groups** and **Directory Middleware** with **zero bundle overhead**. Unauthorized users are blocked at the router level without downloading lazy chunks.
+
+### 1. Route Groups `(auth)`, `(dashboard)`, `(public)`
+Group related pages into folders using parentheses `(...)`. The folder name is **stripped from the URL**, allowing you to organize files and apply group-specific middleware:
+
+```
+src/pages/
+├── (auth)/
+│   ├── _middleware.ts      # guestOnly: true (applies to /login, /register)
+│   ├── login.tsx           # Resolves to URL: /login
+│   └── register.tsx        # Resolves to URL: /register
+└── (dashboard)/
+    ├── _middleware.ts      # protected: true, roles: ['admin'] (applies to /analytics, /users/:id)
+    ├── analytics.tsx       # Resolves to URL: /analytics
+    └── users/[id].tsx      # Resolves to URL: /users/:id
+```
+
+### 2. Directory-level Middleware (`_middleware.ts`)
+Create a `_middleware.ts` (or `middleware.ts`) in any directory to enforce rules across all routes in that folder:
+
+```typescript
+// src/pages/(dashboard)/_middleware.ts
+export default {
+  protected: true,
+  roles: ['admin', 'manager'],
+  redirect: '/login'
+};
+```
+Every route in `src/pages/(dashboard)/*` automatically inherits `protected: true` and `roles: ['admin', 'manager']`.
+
+### 3. In-Page Specific Overrides (`export const meta`)
+Individual pages can override or extend group rules:
+
+```typescript
+// src/pages/(dashboard)/billing.tsx
+export const meta = {
+  roles: ['superadmin'], // Overrides parent group to superadmin only
+  title: 'Billing & Finance'
+};
+
+export default function BillingPage() {
+  return <h1>Billing</h1>;
+}
+```
+
+### 4. Built-in Runtime Helpers & `<RouteGuard />`
+```typescript
+import { RouteGuard, hasRole, hasPermission, evaluateGuard, canAccess } from '@zarr20/rakit-routes';
+
+// Quick boolean access check:
+const isAllowed = canAccess(auth, route.meta);
+
+// Role check:
+const isAdmin = hasRole(auth, ['admin', 'superadmin']);
+
+// Permission check:
+const canEdit = hasPermission(auth, 'users:write');
 ```
 
 ---
