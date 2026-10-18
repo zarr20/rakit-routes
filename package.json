@@ -1,6 +1,6 @@
 {
   "name": "@zarr20/rakit-routes",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Automatic file-system based routing generator for React applications.",
   "type": "module",
   "main": "./dist/index.js",
@@ -17,6 +17,14 @@
     "./vite": {
       "import": "./dist/vite.js",
       "types": "./dist/vite.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
     }
   },
   "files": [

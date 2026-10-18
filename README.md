@@ -10,6 +10,15 @@
 
 ---
 
+<!-- LATEST_RELEASE_START -->
+## 🆕 What's New in v1.1.1
+
+- ✨ **deploy**: automate release note extraction directly from git commits
+- ✨ **deploy**: auto-detect updates and reset README with latest release highlights
+- ✨ add route middleware, role handling, cascading guards, and build-time metadata extraction
+- 🐛 **release**: standardize git tag convention to X.Y.Z without v prefix
+<!-- LATEST_RELEASE_END -->
+
 ## 🚀 Key Features
 
 - ⚡ **File-System Based Routing**: Automatically maps directory hierarchies into route paths (supports dynamic parameters `[id]` → `:id`).
@@ -163,8 +172,8 @@ export default function App() {
 ## 🔗 Links
 
 - **Repository**: [https://github.com/zarr20/rakit-routes](https://github.com/zarr20/rakit-routes)
-- **Source Code**: [https://github.com/zarr20/rakit-routes-dev](https://github.com/zarr20/rakit-routes-dev)
-- **Issues & Feedback**: [https://github.com/zarr20/rakit-routes-dev/issues](https://github.com/zarr20/rakit-routes-dev/issues)
+- **Source Code**: [https://github.com/zarr20/rakit-routes](https://github.com/zarr20/rakit-routes)
+- **Issues & Feedback**: [https://github.com/zarr20/rakit-routes/issues](https://github.com/zarr20/rakit-routes/issues)
 
 ---
 
