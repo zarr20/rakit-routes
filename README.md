@@ -1,41 +1,42 @@
 # @zarr20/rakit-routes
 
-> Generator rute otomatis berbasis struktur direktori/file untuk aplikasi React.
+> Automatic file-system based routing generator for React applications.
 
-[![license](https://img.shields.io/npm/l/@zarr20/rakit-routes.svg?v=1)](./LICENSE)
-[![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?v=1)](https://www.typescriptlang.org/)
+[![npm version](https://badge.fury.io/js/@zarr20/rakit-routes.svg)](https://www.npmjs.com/package/@zarr20/rakit-routes)
+[![license](https://img.shields.io/npm/l/@zarr20/rakit-routes.svg)](./LICENSE)
+[![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
-Ekstraksi fitur routing otomatis file-based yang ringan dan efisien untuk memetakan halaman (`pages`) menjadi konfigurasi router React secara otomatis.
-
----
-
-## 🚀 Fitur Utama
-
-- ⚡ **File-System Based Routing**: Pemetaan otomatis direktori `pages` menjadi struktur rute (mendukung dynamic route `[id]` → `:id`).
-- ⚛️ **React Router Code Generation**: Menghasilkan konfigurasi rute siap pakai dengan `React.lazy` untuk code splitting optimal.
-- 🛠️ **CLI Ready**: Eksekusi cepat melalui CLI `npx @zarr20/rakit-routes`.
-- 🔌 **Extensible Writers**: Arsitektur modular yang mendukung custom route writer sesuai kebutuhan framework.
-- 📦 **TypeScript First**: Dukungan tipe lengkap bawaan tanpa setup tambahan.
+A lightweight, efficient file-based routing generator that automatically maps your `pages` directory into ready-to-use React Router configuration.
 
 ---
 
-## 📦 Instalasi
+## 🚀 Key Features
+
+- ⚡ **File-System Based Routing**: Automatically maps directory structure to route paths (supports dynamic parameters like `[id]` → `:id`).
+- ⚛️ **React Router Code Generation**: Generates clean route definitions with `React.lazy` for built-in code splitting.
+- 🛠️ **CLI Ready**: Quick one-command execution via `npx @zarr20/rakit-routes` or `npx rakit-routes`.
+- 🔌 **Extensible Writers**: Modular architecture allowing custom route writers for different router libraries or frameworks.
+- 📦 **TypeScript First**: Full TypeScript support with comprehensive type definitions included out of the box.
+
+---
+
+## 📦 Installation
 
 ```bash
 npm install @zarr20/rakit-routes
-# atau
+# or
 pnpm add @zarr20/rakit-routes
-# atau
+# or
 yarn add @zarr20/rakit-routes
 ```
 
 ---
 
-## 💡 Cara Penggunaan
+## 💡 Usage
 
-### 1. Menggunakan Script Node / TypeScript
+### 1. Using Node / TypeScript Script
 
-Buat file konfigurasi, misalnya `scripts/generate-routes.ts`:
+Create a script file, for example `scripts/generate-routes.ts`:
 
 ```typescript
 import { routerMapper, reactRouterWriter } from '@zarr20/rakit-routes';
@@ -43,20 +44,20 @@ import { routerMapper, reactRouterWriter } from '@zarr20/rakit-routes';
 routerMapper({
   pages: {
     dir: './src/pages',
-    extensions: ['.tsx', '.ts']
+    extensions: ['.tsx', '.ts'],
   },
   output: {
     dir: './src/shared/router',
-    fileName: 'routes'
+    fileName: 'routes',
   },
   importBase: '../../pages',
-  writer: reactRouterWriter()
+  writer: reactRouterWriter(),
 });
 
 console.log('✅ Routes generated successfully');
 ```
 
-Tambahkan script pada `package.json`:
+Add the script to your `package.json`:
 
 ```json
 {
@@ -68,19 +69,21 @@ Tambahkan script pada `package.json`:
 }
 ```
 
-### 2. Menggunakan CLI
+### 2. Using the CLI
 
 ```bash
+npx @zarr20/rakit-routes
+# or
 npx rakit-routes
 ```
 
-Secara default akan memindai folder `src/pages` dan menghasilkan router di `src/shared/router/router.tsx`.
+By default, the CLI scans `src/pages` and outputs route configuration to `src/shared/router/router.tsx`.
 
 ---
 
-## 🗂️ Konversi Path & Routing
+## 🗂️ Path & Route Conversion
 
-| Struktur File di `pages/` | Route URL yang Dihasilkan |
+| File in `pages/` | Generated Route URL |
 |---|---|
 | `index.tsx` | `/` |
 | `about.tsx` | `/about` |
@@ -90,6 +93,12 @@ Secara default akan memindai folder `src/pages` dan menghasilkan router di `src/
 
 ---
 
-## 📄 Lisensi
+## 📚 Documentation
 
-[MIT](./LICENSE) © Dzarr al ghifari
+For detailed usage, configuration options, and full React integration examples, visit the [Documentation Portal](./docs/).
+
+---
+
+## 📄 License
+
+[MIT](./LICENSE) © Rakit (Dzarr Al Ghifari)
