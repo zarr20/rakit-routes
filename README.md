@@ -1,8 +1,8 @@
-# rakit-routes
+# @zarr20/rakit-routes
 
 > Generator rute otomatis berbasis struktur direktori/file untuk aplikasi React.
 
-[![license](https://img.shields.io/npm/l/rakit-routes.svg?v=1)](./LICENSE)
+[![license](https://img.shields.io/npm/l/@zarr20/rakit-routes.svg?v=1)](./LICENSE)
 [![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?v=1)](https://www.typescriptlang.org/)
 
 Ekstraksi fitur routing otomatis file-based yang ringan dan efisien untuk memetakan halaman (`pages`) menjadi konfigurasi router React secara otomatis.
@@ -13,7 +13,7 @@ Ekstraksi fitur routing otomatis file-based yang ringan dan efisien untuk memeta
 
 - ⚡ **File-System Based Routing**: Pemetaan otomatis direktori `pages` menjadi struktur rute (mendukung dynamic route `[id]` → `:id`).
 - ⚛️ **React Router Code Generation**: Menghasilkan konfigurasi rute siap pakai dengan `React.lazy` untuk code splitting optimal.
-- 🛠️ **CLI Ready**: Eksekusi cepat melalui CLI `npx rakit-routes`.
+- 🛠️ **CLI Ready**: Eksekusi cepat melalui CLI `npx @zarr20/rakit-routes`.
 - 🔌 **Extensible Writers**: Arsitektur modular yang mendukung custom route writer sesuai kebutuhan framework.
 - 📦 **TypeScript First**: Dukungan tipe lengkap bawaan tanpa setup tambahan.
 
@@ -22,11 +22,11 @@ Ekstraksi fitur routing otomatis file-based yang ringan dan efisien untuk memeta
 ## 📦 Instalasi
 
 ```bash
-npm install rakit-routes
+npm install @zarr20/rakit-routes
 # atau
-pnpm add rakit-routes
+pnpm add @zarr20/rakit-routes
 # atau
-yarn add rakit-routes
+yarn add @zarr20/rakit-routes
 ```
 
 ---
@@ -38,7 +38,7 @@ yarn add rakit-routes
 Buat file konfigurasi, misalnya `scripts/generate-routes.ts`:
 
 ```typescript
-import { routerMapper, reactRouterWriter } from 'rakit-routes';
+import { routerMapper, reactRouterWriter } from '@zarr20/rakit-routes';
 
 routerMapper({
   pages: {
