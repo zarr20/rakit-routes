@@ -1,4 +1,4 @@
-import { RouteItem } from "../core/generator";
+import { RouteItem } from "../generator";
 export interface WriterOptions {
     outputDir: string;
     fileName: string;
