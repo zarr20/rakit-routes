@@ -2,7 +2,7 @@ export { routerMapper, computeRelativeImport } from "./features/mapper";
 export type { RouterMapperConfig } from "./features/mapper";
 export { reactRouterWriter } from "./features/writers";
 export type { RouterWriter, WriterOptions } from "./features/writers";
-export { scanPages, extractFileMeta, isSpecialRouteFile, isMiddlewareFile, isLayoutFile, isMetaFile } from "./features/scanner";
+export { scanPages, extractFileMeta, isSpecialRouteFile, isMiddlewareFile, isLayoutFile, isMetaFile, isComponentFile } from "./features/scanner";
 export { generateRouter, sortRoutes, resolveCombinedMeta, findAncestorMiddleware, findCascadingLayouts } from "./features/generator";
 export type { RouteItem } from "./features/generator";
 export { hasRole, hasPermission, evaluateGuard, canAccess, RouteGuard } from "./features/guard";

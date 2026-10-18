@@ -11,9 +11,9 @@
 ---
 
 <!-- LATEST_RELEASE_START -->
-## 🆕 What's New in v1.1.2
+## 🆕 What's New in v1.1.3
 
-- ✨ **routes**: add route grouping support (auth), (dashboard) with group-level middleware
+- ✨ add GeneratedRoutes component, nested middleware routes, ./client subpath export, and fix writer syntax
 <!-- LATEST_RELEASE_END -->
 
 ## 🚀 Key Features
@@ -140,31 +140,52 @@ Whenever you create, rename, or delete a page in `src/pages/`, routes regenerate
 
 ---
 
-## ⚛️ React Router Integration Example
+## ⚛️ React Router Integration
 
-```typescript
+### Approach 1: Zero-Boilerplate `<GeneratedRoutes />` (Recommended)
+
+The generated `router.tsx` automatically exports a ready-to-use `<GeneratedRoutes />` component:
+
+```tsx
 // App.tsx
 import { Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import router from './shared/router/router';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { GeneratedRoutes } from './shared/router/router';
+import AppLayout from './layouts/AppLayout';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Suspense fallback={<div>Loading page...</div>}>
         <Routes>
-          {router.map(({ path, component: Component }) => (
-            <Route
-              key={path}
-              path={path}
-              element={<Component />}
-            />
-          ))}
+          <Route element={<AppLayout />}>
+            <GeneratedRoutes />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
         </Routes>
       </Suspense>
     </BrowserRouter>
   );
 }
+```
+
+### Approach 2: With Auth or Custom Route Wrapper
+```tsx
+<GeneratedRoutes
+  auth={currentAuth}
+  wrapper={({ component: Component, meta, path }) => (
+    <MyCustomMiddleware component={Component} meta={meta} path={path} />
+  )}
+/>
+```
+
+### Approach 3: Manual Mapping via `routerConfig`
+```tsx
+import { routerConfig } from './shared/router/router';
+
+{routerConfig.map(({ path, component: Component }) => (
+  <Route key={path} path={path} element={<Component />} />
+))}
 ```
 
 ---

@@ -4,5 +4,6 @@ export interface RouteItem {
     file: string;
     meta?: RouteMeta;
     middlewareFile?: string;
+    middlewareComponent?: string;
     layoutFiles?: string[];
 }
